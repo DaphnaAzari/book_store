@@ -1,0 +1,18 @@
+<html>
+  <head><link rel="stylesheet" href="/static/styles.css">
+    <title>Daphna's Book Store </title>
+  </head>
+  <body>
+    <h1>📚 Daphna's Book Store 📚</h1>
+    <span>
+      <h2>Books</h2>
+      
+    <ul>
+      {% for book in books%}
+      <li>{{book.title}} by {{book.author}}</li>
+      {%endfor%}
+    </ul>
+    </span>
+   
+  </body>
+</html>

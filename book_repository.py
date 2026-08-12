@@ -11,9 +11,25 @@ class BookRepository:
         rows = self._connection.execute('SELECT * from books')
         books = []
         for row in rows:
-            item = Book(row["id"], row["title"], row["author"])
+            item = Book(row["title"], row["author"], row["release_date"], row["id"])
             books.append(item)
         return books
+    #We change it to the below because psycopg will treat the whole query,
+    #  including the user input which we interpolated, as SQL and try to execute it
+    def create(self, book):
+        self._connection.execute(
+            'INSERT INTO books (title, author,release_date) VALUES (%s, %s, %s)',
+            [book.title, book.author, book.release_date]
+        )
+        return None
+
+    
+    # def create(self, book):
+    #     self._connection.execute(
+    #         f"INSERT INTO books (title, author, release_date) VALUES ('{book.title}', '{book.author}, {book.release_date}')",
+    #         []
+    #     )
+    #     return None
 
     # # Find a single artist by their id
     # def find(self, artist_id):

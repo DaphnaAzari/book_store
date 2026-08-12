@@ -22,25 +22,11 @@ def test_get_books_returns_a_200():
 def test_get_books():
     client = app.test_client()
     response = client.get("/books")
-    print(f"response", {response})
-    assert response.json == [
-    {
-        "title": "The Gruffalo",
-        "author": "Julia Donaldson"
-    },
-    {
-        "title": "Ada Twist, Scientist",
-        "author": "Andrea Beaty"
-    },
-    {
-        "title": "The Girl Who Drank the Moon",
-        "author": "Kelly Barnhill"
-    },
-    {
-        "title": "Dragons in a Bag",
-        "author": "Zetta Elliott"
-    }
-    ]
+    print(f"response", {response.data})
+    assert b"The Gruffalo by Julia Donaldson" in response.data
+    assert b"Ada Twist, Scientist by Andrea Beaty" in response.data
+    assert b"The Girl Who Drank the Moon by Kelly Barnhill" in response.data
+    assert b"Dragons in a Bag by Zetta Elliott" in response.data
 
 def test_get_author_returns_200():
     client = app.test_client()
@@ -49,7 +35,7 @@ def test_get_author_returns_200():
 
 def test_get_authors():
     client = app.test_client()
-    response = client.get("/authors")
+    response = client.get("/authors-json")
     assert response.json == [
     {
         "name": "Julia Donaldson",

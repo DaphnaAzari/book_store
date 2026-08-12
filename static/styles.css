@@ -1,10 +1,13 @@
 body {
-  background-color: lightblue;
+  background-color: ee9b00;
+  color: 005f73;
+  font-family: 'Courier New', Courier, monospace;
   font-size:larger;
 }
 h1 {
+  font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
-  color: #333333;
+  color: #005f73;
 }
 
 img {

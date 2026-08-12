@@ -1,11 +1,10 @@
-class Book:
+class User:
     # We initialise with all of our attributes
     # Each column in the table should have an attribute here
-    def __init__(self, title, author, release_date, id = None):
+    def __init__(self, username, password, id = None):
         self.id = id
-        self.title = title
-        self.author = author
-        self.release_date = release_date
+        self.title = username
+        self.author = password
 
     # This tells Python how to compare two Artists. 
     # Without this, Python only checks if they are the same object in memory. 
@@ -13,8 +12,8 @@ class Book:
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-    # This controls what you see when you print(artist).
-    # Instead of seeing a confusing code like <Artist object at 0x102...>, 
+    # This controls what you see when you print(users).
+    # Instead of seeing a confusing code like <User object at 0x102...>, 
     # you'll see the actual ID, Name, and Genre, which is much more useful to us humans
     def __repr__(self):
-        return f"Book({self.id}, {self.title}, { self.author}, {self.release_date})"
+        return f"User({self.id}, {self.username}, { self.password})"

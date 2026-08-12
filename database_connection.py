@@ -8,7 +8,10 @@ import os
 # If the below seems too complex right now, that's OK.
 # That's why we have provided it!
 class DatabaseConnection:
-    DATABASE_NAME = "book_store" # <-- CHANGE THIS!
+    # DATABASE_NAME = "book_store" # <-- CHANGE THIS!
+    #changed so we can move between test db and regular db
+    DATABASE_NAME = os.getenv("DATABASE_NAME", "book_store_test")
+    DATABASE_HOST = os.getenv("DATABASE_HOST", "localhost")
 
     def __init__(self):
         self.connection = None
@@ -18,7 +21,12 @@ class DatabaseConnection:
     def connect(self):
         try:
             self.connection = psycopg.connect(
-                f"postgresql://localhost/{self.DATABASE_NAME}",
+                #updated to the below for test db
+                f"postgresql://{self.DATABASE_HOST}/{self.DATABASE_NAME}",
+
+                # f"postgresql://localhost/{self.DATABASE_NAME}",
+                # f"postgresql://book_store_db/{self.DATABASE_NAME}",
+                # f"postgresql://postgres:password@book_store_db/{self.DATABASE_NAME}",
                 row_factory=dict_row)
         except psycopg.OperationalError:
             raise Exception(f"Couldn't connect to the database {self.DATABASE_NAME}! " \
@@ -38,6 +46,8 @@ class DatabaseConnection:
     # It allows you to set some parameters too. You'll learn about this later.
     def execute(self, query, params=[]):
         self._check_connection()
+        #he query is your SQL, with some placeholders 
+        # and the params are user input
         with self.connection.cursor() as cursor:
             cursor.execute(query, params)
             if cursor.description is not None:

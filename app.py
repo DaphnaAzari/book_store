@@ -1,6 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request,redirect
 from database_connection import DatabaseConnection
 from book_repository import BookRepository
+from book import Book
+from user import User
+from user_repository import UserRepository
 
 # instantiate a Flask app object
 app = Flask(__name__)
@@ -32,6 +35,54 @@ def get_all_books():
     books = book_repository.all()
     # print(books)
     return render_template("books.html", books=books)
+
+# @app.route('/books', methods=['POST'])
+# def create_book():
+#   book_details = request.json
+#   print(book_details)
+#   return "created", 201
+@app.route('/books', methods=['POST'])
+def create_book():
+    # make a new database connection
+    connection = DatabaseConnection()
+    connection.connect()
+
+    # make a new instance of BookRepository
+    book_repository = BookRepository(connection)
+
+    # get the request body
+    # book_details = request.json
+    # updated to:
+    book_details = request.form
+
+
+    # my BookRepository expects an instance of Book, so make one here
+    book = Book(title=book_details["title"], author=book_details["author"], release_date=book_details["release_date"])
+
+    # save the book
+    book_repository.create(book)
+
+    # return a 201, which means "created"
+    # return "created", 201
+    # updated to a redirect after creation:
+    return redirect("/books")
+
+
+
+@app.route('/users/new', methods=['GET'])
+def get_signup_form():
+    return render_template("signup_form.html")
+
+
+@app.route('/users', methods=['POST'])
+def create_user():
+    connection = DatabaseConnection()
+    connection.connect()
+    user_repository = UserRepository(connection)
+    user_details = request.form
+    user = User(username=user_details["username"], password=user_details["password"])
+    user_repository.create(user)
+    return redirect("/books")
 
 # @app.route("/books", methods=["GET"])
 # def books():

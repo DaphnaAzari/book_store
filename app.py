@@ -80,7 +80,10 @@ def create_user():
     connection.connect()
     user_repository = UserRepository(connection)
     user_details = request.form
+    print(f"user details: {user_details}")
+    print(f"user details of use: {user_details["username"]}")
     user = User(username=user_details["username"], password=user_details["password"])
+    print(f"user : {user}")
     user_repository.create(user)
     return redirect("/books")
 

@@ -3,8 +3,8 @@ class User:
     # Each column in the table should have an attribute here
     def __init__(self, username, password, id = None):
         self.id = id
-        self.title = username
-        self.author = password
+        self.username = username
+        self.password = password
 
     # This tells Python how to compare two Artists. 
     # Without this, Python only checks if they are the same object in memory. 

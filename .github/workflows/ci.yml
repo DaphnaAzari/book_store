@@ -42,8 +42,9 @@ jobs:
           psql -h 127.0.0.1 -U runner book_store_test -f seeds/users.sql
 
       - name: Start web app
-        run: nohup python app.py > app.log 2>&1 &
+        run: |
+          nohup python app.py > app.log 2>&1 &
 
       - name: Run tests
         run: |
-          pytest
+          pytest -v -s

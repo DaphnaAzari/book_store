@@ -1,14 +1,16 @@
 from playwright.sync_api import Page, expect
 from database_connection import DatabaseConnection
+from login_helper import login
 
 def test_book_list_contains_all_books(page: Page):
     connection = DatabaseConnection()
     connection.connect()
-    connection.seed("./seeds/books.sql")
+    connection.seed("../seeds/books.sql")
 
 # passing in a playwrite object: (page: Page)
 def test_has_title(page: Page):
-    page.goto("http://127.0.0.1:5001/books")
+    login(page)
+    page.goto("http://localhost:5001/books")
     # we need to store an h1 tag variable:
     h1 = page.locator("h1")
     expect(h1).to_contain_text("Daphna's Book Store")
@@ -21,7 +23,8 @@ def test_correct_list_of_books(page: Page):
     # Playwright doesn't run the app for us
     # it just visits it like a real user would 
     # If nothing is running on port 5001 this line fails immediately
-    page.goto("http://127.0.0.1:5001/books")
+    login(page)
+    page.goto("http://localhost:5001/books")
     # we need to store an h1 tag variable:
     # books = page.locator("li")
     expected_books = [
@@ -53,27 +56,38 @@ def test_correct_list_of_books(page: Page):
 
 
 
-def test_add_new_book(page: Page):
-    page.goto("http://127.0.0.1:5001/books")
-    all_h2 = page.locator("h2").all()
-    # second_h2 =page.locator("h2").nth(1)
-    expect(all_h2[0]).to_contain_text("Books")
-    expect(all_h2[1]).to_contain_text("Add Books:")
-    # expect(second_h2).to_contain_text("Add Books:")
-    books = page.locator('li')
-    # expected_books = [
-    #   'The Gruffalo by Julia Donaldson released in 23/03/1999',
-    #   'Ada Twist, Scientist by Andrea Beaty',
-    #   'The Girl Who Drank the Moon by Kelly Barnhill',
-    #   'Dragons in a Bag by Zetta Elliott'
-    # ]
-    page.get_by_placeholder("Title").fill("Lost and Found")
-    page.get_by_placeholder("Author").fill("Oliver Jeffers")
-    page.get_by_placeholder("Release date").fill("05/09/2005")
+
+def test_create_new_book(page: Page):
+    login(page)
+    page.goto("http://localhost:5001/books")
+    page.get_by_placeholder("Title").fill("The Chroicles of Geronimo (the cat)")
+    page.get_by_placeholder("Author").fill("Geronimo")
+    page.get_by_placeholder("Release date").fill("15/05/2015")
     page.get_by_role("button", name="Submit").click()
     books = page.locator('li')
     new_book = books.all_inner_texts()[-1]
-    assert new_book == "Lost and Found by Oliver Jeffers released in 05/09/2005"
+    assert new_book == "The Chroicles of Geronimo (the cat) by Geronimo released in 15/05/2015"
 
 
 
+# def test_add_new_book(page: Page):
+#     page.goto("http://127.0.0.1:5001/books")
+#     all_h2 = page.locator("h2").all()
+#     # second_h2 =page.locator("h2").nth(1)
+#     expect(all_h2[0]).to_contain_text("Books")
+#     expect(all_h2[1]).to_contain_text("Add Books:")
+#     # expect(second_h2).to_contain_text("Add Books:")
+#     books = page.locator('li')
+#     # expected_books = [
+#     #   'The Gruffalo by Julia Donaldson released in 23/03/1999',
+#     #   'Ada Twist, Scientist by Andrea Beaty',
+#     #   'The Girl Who Drank the Moon by Kelly Barnhill',
+#     #   'Dragons in a Bag by Zetta Elliott'
+#     # ]
+#     page.get_by_placeholder("Title").fill("Lost and Found")
+#     page.get_by_placeholder("Author").fill("Oliver Jeffers")
+#     page.get_by_placeholder("Release date").fill("05/09/2005")
+#     page.get_by_role("button", name="Submit").click()
+#     books = page.locator('li')
+#     new_book = books.all_inner_texts()[-1]
+#     assert new_book == "Lost and Found by Oliver Jeffers released in 05/09/2005"

@@ -1,14 +1,20 @@
-from flask import Flask, render_template, request,redirect
+from flask import Flask, render_template, request,redirect,session
 from database_connection import DatabaseConnection
 from book_repository import BookRepository
 from book import Book
 from user import User
 from user_repository import UserRepository
+from authenticated import is_authenticated
+from login_required import login_required
 
 # instantiate a Flask app object
 app = Flask(__name__)
 
-# NEW PART START
+# this is added because in Flask the data is stored in a cookie that is sent back
+#and forth between server and client, therefore we need a secret key to prevent malicious
+#tampering
+app.secret_key = "some_really_secret_key"
+
 
 # Declares a route that listens for a GET request to the path /hello
 # and a method to execute when that request comes in
@@ -23,6 +29,7 @@ def hello():
     return "Hello to you too"
 
 @app.route('/books', methods = ['GET'])
+@login_required
 def get_all_books():
     # make a connection instanse/ instantiating:
     connection = DatabaseConnection()
@@ -42,7 +49,14 @@ def get_all_books():
 #   print(book_details)
 #   return "created", 201
 @app.route('/books', methods=['POST'])
+#call loging required on this:
+@login_required
 def create_book():
+
+#the below is not needed anymore as we do this in the waped login_required func:
+    # if not is_authenticated(session):
+    #     return redirect("/sessions/new")
+    
     # make a new database connection
     connection = DatabaseConnection()
     connection.connect()
@@ -87,6 +101,35 @@ def create_user():
     user_repository.create(user)
     return redirect("/books")
 
+@app.route('/sessions/new', methods=['GET'])
+def get_login_form():
+    return render_template("login_form.html")
+
+
+
+@app.route('/sessions', methods=['POST'])
+def create_session():
+    #initializing a db connection
+    connection = DatabaseConnection()
+    #using the connect method on it to connect to db
+    connection.connect()
+    #initializing a connection with Userrepo
+    user_repository = UserRepository(connection)
+    #accessing the body of the request from the form and specifically
+    #looking for these values
+    username = request.form["username"]
+    password = request.form["password"]
+#calling the method that we made in user repo to find the user by their username
+    user = user_repository.find_by_username(username)
+#if the user exsists, and the password equals what we expect the store
+#user.id and user.username in the sessions respectivly
+    if user and user.password == password:
+        session["user_id"] = user.id
+        session["username"] = user.username
+    #if all goes well, redirect user to /books, else redirect to try a new session again
+        return redirect("/books")
+    else:
+        return redirect("/sessions/new")
 # @app.route("/books", methods=["GET"])
 # def books():
 #     return render_template("books.html")

@@ -11,12 +11,12 @@ def test_get_books_returns_a_200():
     # here's where we make the test client
     client = app.test_client()
 
-    # here's where we make the request, the rout we are calling
+    # here's where we make the request, the route we are calling
+
     response = client.get("/books")
 
     # here's where we assert that the response's status code is 200
     assert response.status_code == 200
-
 
 
 def test_get_books():

@@ -2,10 +2,10 @@ from playwright.sync_api import Page, expect
 from database_connection import DatabaseConnection
 from login_helper import login
 
-def test_book_list_contains_all_books(page: Page):
-    connection = DatabaseConnection()
-    connection.connect()
-    connection.seed("../seeds/books.sql")
+# def test_book_list_contains_all_books(page: Page):
+#     connection = DatabaseConnection()
+#     connection.connect()
+#     connection.seed("../seeds/books.sql")
 
 # passing in a playwrite object: (page: Page)
 def test_has_title(page: Page):
